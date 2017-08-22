@@ -3,6 +3,9 @@ FROM phusion/baseimage:0.9.22
 # Dockerfile author / maintainer
 MAINTAINER tutysara <tutysara@gmailcom>
 
+# Use baseimage-docker's init system.
+CMD ["/sbin/my_init"]
+
 RUN  cd /var/lib/apt && mv lists lists.old
 RUN apt-get update && apt-get install -y  software-properties-common
 # install emacs
@@ -23,6 +26,9 @@ RUN apt install -y curl  \
 
 RUN apt install locales && locale-gen en_US en_US.UTF-8
 
+# Clean up APT when done.
+RUN apt-get clean && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
+
 # add user and configure
 RUN useradd -m -s /bin/bash tutysara && usermod -aG sudo tutysara
 # run everything as this new user
@@ -39,4 +45,6 @@ RUN mkdir /tmp/adodefont && \
   fc-cache -f -v
 RUN echo 'export LC_ALL="en_US.UTF-8"' > ~/.bashrc
 
-ENTRYPOINT ["/bin/bash"]
+USER root
+WORKDIR /
+CMD ["/sbin/my_init","--", "setuser", "tutysara", "bash"]
