@@ -9,7 +9,6 @@ RUN apt-get update && apt-get install -y \
 	    bzip2 \
 	    ca-certificates \
 	    curl \
-	    emacs \
 	    eog \
 	    git \
 	    htop \
@@ -53,7 +52,6 @@ USER tutysara
 WORKDIR /home/tutysara
 
 # install spacemacs and update fonts
-RUN git clone https://github.com/syl20bnr/spacemacs ~/.emacs.d
 RUN mkdir /tmp/adodefont && \
   cd /tmp/adodefont && \
   wget https://github.com/adobe-fonts/source-code-pro/archive/2.010R-ro/1.030R-it.zip && \
