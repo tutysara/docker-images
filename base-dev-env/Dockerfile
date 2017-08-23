@@ -46,5 +46,5 @@ RUN mkdir /tmp/adodefont && \
 RUN echo 'export LC_ALL="en_US.UTF-8"' > ~/.bashrc
 
 USER root
-WORKDIR /
+WORKDIR /home/tutysara
 CMD ["/sbin/my_init","--", "setuser", "tutysara", "bash"]
