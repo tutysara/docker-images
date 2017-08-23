@@ -4,23 +4,30 @@ FROM phusion/baseimage:0.9.22
 MAINTAINER tutysara <tutysara@gmailcom>
 
 RUN  cd /var/lib/apt && mv lists lists.old
-RUN apt-get update && apt-get install -y  software-properties-common
+
+RUN apt-get update && apt-get install -y \
+	    bzip2 \
+	    ca-certificates \
+	    curl \
+	    emacs \
+	    eog \
+	    git  \
+	    htop  \
+	    mosh \
+	    software-properties-common \
+	    tmux \
+	    telnet \
+	    vim \
+	    wget \
+	    unzip	
+
+
 # install emacs
 RUN add-apt-repository ppa:kelleyk/emacs && \
    apt update && \
    apt install -y emacs25
-RUN apt install -y curl  \
-  git  \
-  htop  \
-  mosh \
-  tmux \
-  telnet \
-  eog \
-  wget \
-  bzip2 \
-  unzip
 
-
+# generate locales
 RUN apt install locales && locale-gen en_US en_US.UTF-8
 
 # Clean up APT when done.
@@ -45,6 +52,10 @@ RUN echo 'export LC_ALL="en_US.UTF-8"' >> ~/.bashrc
 
 USER root
 WORKDIR /home/tutysara
+
+# enable ssh
+RUN rm -f /etc/service/sshd/down
+RUN /etc/my_init.d/00_regen_ssh_host_keys.sh
 
 # Use baseimage-docker's init system.
 CMD ["/sbin/my_init","--", "setuser", "tutysara", "bash"]
