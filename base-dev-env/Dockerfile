@@ -11,10 +11,13 @@ RUN apt-get update && apt-get install -y \
 	    curl \
 	    emacs \
 	    eog \
-	    git  \
-	    htop  \
+	    git \
+	    htop \
+	    iputils-ping \
 	    mosh \
+	    net-tools \
 	    software-properties-common \
+	    sudo \
 	    tmux \
 	    telnet \
 	    vim \
@@ -34,23 +37,29 @@ RUN apt install locales && locale-gen en_US en_US.UTF-8
 RUN apt-get clean && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
 
 # add user and configure
-RUN useradd -m -s /bin/bash tutysara && usermod -aG sudo tutysara
+RUN useradd -m -s /bin/bash tutysara -p $(openssl passwd -1 changeme) && usermod -aG sudo tutysara 
 
-# copy rc.local script
+# sshd config
+RUN sed -i s/#PermitRootLogin.*/PermitRootLogin\ yes/ /etc/ssh/sshd_config && \
+	sed -i s/.*ChallengeResponseAuthentication.*/ChallengeResponseAuthentication\ no/ /etc/ssh/sshd_config && \
+	sed -i s/.*PasswordAuthentication.*/PasswordAuthentication\ no/ /etc/ssh/sshd_config && \
+	sed -i s/.*UsePAM.*/UsePAM\ no/ /etc/ssh/sshd_config
+
+# copy rc.local script -- for changing mount permission
 COPY rc.local /etc/rc.local
 RUN chmod +x /etc/rc.local
 # run everything as this new user
 USER tutysara
 WORKDIR /home/tutysara
 
-RUN git clone https://github.com/syl20bnr/spacemacs ~/.emacs.d
-RUN mkdir /tmp/adodefont && \
-  cd /tmp/adodefont && \
-  wget https://github.com/adobe-fonts/source-code-pro/archive/2.010R-ro/1.030R-it.zip && \
-  unzip 1.030R-it.zip &&\
-  mkdir -p ~/.fonts &&\
-  cp source-code-pro-2.010R-ro-1.030R-it/OTF/*.otf ~/.fonts/ &&\
-  fc-cache -f -v
+#RUN git clone https://github.com/syl20bnr/spacemacs ~/.emacs.d
+#RUN mkdir /tmp/adodefont && \
+#  cd /tmp/adodefont && \
+#  wget https://github.com/adobe-fonts/source-code-pro/archive/2.010R-ro/1.030R-it.zip && \
+#  unzip 1.030R-it.zip &&\
+#  mkdir -p ~/.fonts &&\
+#  cp source-code-pro-2.010R-ro-1.030R-it/OTF/*.otf ~/.fonts/ &&\
+#  fc-cache -f -v
 RUN cp /etc/skel/.bashrc ~/.bashrc
 RUN echo 'export LC_ALL="en_US.UTF-8"' >> ~/.bashrc
 
@@ -62,4 +71,4 @@ RUN rm -f /etc/service/sshd/down
 RUN /etc/my_init.d/00_regen_ssh_host_keys.sh
 
 # Use baseimage-docker's init system.
-CMD ["/sbin/my_init","--", "setuser", "tutysara", "bash"]
+#CMD ["/sbin/my_init","--", "setuser", "tutysara", "bash"]
