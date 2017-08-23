@@ -3,9 +3,6 @@ FROM phusion/baseimage:0.9.22
 # Dockerfile author / maintainer
 MAINTAINER tutysara <tutysara@gmailcom>
 
-# Use baseimage-docker's init system.
-CMD ["/sbin/my_init"]
-
 RUN  cd /var/lib/apt && mv lists lists.old
 RUN apt-get update && apt-get install -y  software-properties-common
 # install emacs
@@ -43,8 +40,11 @@ RUN mkdir /tmp/adodefont && \
   mkdir -p ~/.fonts &&\
   cp source-code-pro-2.010R-ro-1.030R-it/OTF/*.otf ~/.fonts/ &&\
   fc-cache -f -v
-RUN echo 'export LC_ALL="en_US.UTF-8"' > ~/.bashrc
+RUN cp /etc/skel/.bashrc ~/.bashrc
+RUN echo 'export LC_ALL="en_US.UTF-8"' >> ~/.bashrc
 
 USER root
 WORKDIR /home/tutysara
+
+# Use baseimage-docker's init system.
 CMD ["/sbin/my_init","--", "setuser", "tutysara", "bash"]
