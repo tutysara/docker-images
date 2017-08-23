@@ -35,6 +35,10 @@ RUN apt-get clean && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
 
 # add user and configure
 RUN useradd -m -s /bin/bash tutysara && usermod -aG sudo tutysara
+
+# copy rc.local script
+COPY rc.local /etc/rc.local
+RUN chmod +x /etc/rc.local
 # run everything as this new user
 USER tutysara
 WORKDIR /home/tutysara

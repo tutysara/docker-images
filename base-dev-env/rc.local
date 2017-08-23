@@ -1,0 +1,3 @@
+#!/bin/bash
+echo "Running rc.local"
+chown -R tutysara:tutysara /home/tutysara/
