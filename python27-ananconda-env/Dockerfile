@@ -3,10 +3,9 @@ From tutysara/base-dev-env
 # Dockerfile author / maintainer 
 MAINTAINER tutysara <tutysara@gmailcom>
 
-
-RUN wget --quiet https://repo.continuum.io/archive/Anaconda2-4.4.0-Linux-x86_64.sh -O ~/anaconda.sh && \
-    /bin/bash ~/anaconda.sh -b -p /home/tutysara/anaconda2 && \
+RUN echo 'export PATH=/opt/conda/bin:$PATH' > /etc/profile.d/conda.sh && \
+    wget --quiet https://repo.continuum.io/archive/Anaconda2-4.4.0-Linux-x86_64.sh -O ~/anaconda.sh && \
+    /bin/bash ~/anaconda.sh -b -p /opt/conda && \
     rm ~/anaconda.sh
 
 ENV PATH /home/tutysara/anaconda2/bin:$PATH
-#ENV PYTHONHOME /home/tutysara/anaconda2
